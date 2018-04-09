@@ -1,0 +1,129 @@
+---
+title: "Project Proposal"
+author: "Megan Mets and Mounika Narayanan"
+date: "2/19/2018"
+output: pdf_document
+---
+
+```{r}
+ppl <- 3:26
+# Create the square. Each of the six treatments occuring once per row and once per column
+# Randomize the order of the rows
+set.seed(15679)
+rows <- sample(1:6,6,replace=FALSE)
+rows
+# Randomize the order of the columns
+set.seed(15679)
+cols <- sample(1:6,6, replace=FALSE)
+cols
+
+treatments <- c("Dex", "LSD", "MDMA", "Run", "Mems", "Massage")
+# Randomly assign participants to a treatment
+set.seed(15679)
+sample(24,replace=FALSE)
+```
+
+This means that Latin square one will have participants: 24  9 10 15 26 20. Latin Square two will have participants: 6  4  8 17  5 22. Latin Square three will have participants: 3 11 18 14  7 25. Latin square 4 will have participants: 12 16 21 23 19 13. 
+
+```{r}
+setwd("C:/Users/Mounika/Documents/STATS 101B")
+
+# Latin Square 1
+LS1 <- read.csv("LS1.csv", stringsAsFactors = F)
+
+m1 <- lm(Diff ~ Name + Day + Method, data= LS1)
+par(mfrow=c(2,2))
+plot(m1)
+anova(m1)   # Method p value 0.925
+
+m1n <- aov(Diff ~ Name + Day + Method, data= LS1)
+summary(m1n)
+plot(m1n)
+
+
+# Latin Square 2
+LS2 <- read.csv("LS2.csv", stringsAsFactors = F)
+
+m2 <- lm(Diff ~ Name + Day + Method, data= LS2)
+par(mfrow=c(2,2))
+plot(m2)
+anova(m2)   # Method p value 0.01585
+
+m2n <- aov(Diff ~ Name + Day + Method, data= LS2)
+summary(m2n)
+plot(m2n)
+
+
+# Latin Square 3
+LS3 <- read.csv("LS3.csv", stringsAsFactors = F)
+
+m3 <- lm(Diff ~ Name + Day + Method, data= LS3)
+par(mfrow=c(2,2))
+plot(m3) # point 23 maybe
+
+anova(m3)   # Method p value 0.144
+m3n <- aov(Diff ~ Name + Day + Method, data= LS3)
+summary(m3n)
+plot(m3n)
+
+
+# Latin Square 4
+LS4 <- read.csv("LS4.csv", stringsAsFactors = F)
+
+m4 <- lm(Diff ~ Name + Day + Method, data= LS4)
+par(mfrow=c(2,2))
+plot(m4) # point 2
+anova(m4)   # Method p value 0.91
+
+m4n <- aov(Diff ~ Name + Day + Method, data= LS4)
+summary(m4n)
+plot(m4n)
+
+```
+
+```{r}
+# combined data
+my_data <- rbind(LS1, LS2, LS3, LS4)
+
+# model
+m5 <- lm(Diff ~ Name + Day + Method, data= my_data)
+par(mfrow=c(2,2))
+plot(m5)
+anova(m5) # 0.00868
+
+m5n <- aov(Diff ~ Name + Day + Method, data= my_data)
+summary(m5n)
+plot(m5n)
+
+# assuring assumptions are met
+nice_data <- my_data[-33,]
+m6 <- lm(Diff ~ Name + Day + Method, data= nice_data)
+par(mfrow=c(2,2))
+plot(m6)
+anova(m6)   # Method p value 0.02782
+
+m6n <- aov(Diff ~ Name + Day + Method, data= nice_data)
+summary(m6n)
+plot(m6n)
+```
+
+```{r}
+confints <- TukeyHSD(m6n, which="Method")
+confints
+plot(confints)
+
+par(mfrow=c(2,2))
+boxplot(LS1$Diff~LS2$Method, main= "Latin Square 1", xlab= "Method", ylab="Difference")
+boxplot(LS2$Diff~LS2$Method, main= "Latin Square 2", xlab= "Method", ylab="Difference")
+boxplot(LS3$Diff~LS2$Method, main= "Latin Square 3", xlab= "Method", ylab="Difference")
+boxplot(LS4$Diff~LS2$Method, main= "Latin Square 4", xlab= "Method", ylab="Difference")
+
+par(mfrow=c(1,1))
+boxplot(nice_data$Diff~nice_data$Method, main= "Combined Data", xlab= "Method", ylab="Difference")
+```
+
+
+
+
+
+
